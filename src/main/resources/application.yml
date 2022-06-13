@@ -1,0 +1,24 @@
+server:
+  port : 5000
+
+pokemon:
+  base:
+    url: https://pokeapi.co/api/v2/
+
+Translation:
+  base:
+    url: https://api.funtranslations.com/translate/
+
+feign:
+    client:
+        config:
+            default:
+                connectTimeout: 5000
+                readTimeout: 5000
+                loggerLevel: FULL
+
+logging:
+  level:
+    org:
+      springframework:
+        cache: TRACE
