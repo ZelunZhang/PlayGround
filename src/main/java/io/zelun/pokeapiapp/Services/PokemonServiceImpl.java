@@ -1,11 +1,13 @@
 package io.zelun.pokeapiapp.Services;
 
+import io.zelun.pokeapiapp.Repo.InfoRepo;
 import io.zelun.pokeapiapp.clients.PokeApiClient;
 import io.zelun.pokeapiapp.clients.TranslationApiClient;
 import io.zelun.pokeapiapp.dto.PokemonServiceResponse;
 import io.zelun.pokeapiapp.dto.pokemonApi.FlavorText;
 import io.zelun.pokeapiapp.dto.pokemonApi.PokemonApiResponse;
 import io.zelun.pokeapiapp.dto.translationApi.TranslationRequest;
+import io.zelun.pokeapiapp.model.Info;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,14 @@ public class PokemonServiceImpl implements PokemonService {
     @Autowired
     private TranslationApiClient translationApiClient;
 
+    @Autowired
+    private InfoRepo infoRepo;
+
     @Override
     public PokemonServiceResponse getPokenmonById(String id) {
-        return getPokemonServiceResponse(pokeApiClient.getPokenmonById(id));
+        PokemonApiResponse pokenmonResponse = pokeApiClient.getPokenmonById(id);
+        persistPokemonSearches(pokenmonResponse);
+        return getPokemonServiceResponse(pokenmonResponse);
     }
 
     @Override
@@ -40,6 +47,28 @@ public class PokemonServiceImpl implements PokemonService {
                 .habitat(pokemonServiceResponse.getHabitat())
                 .isLengendary(pokemonServiceResponse.isLengendary())
                 .build();
+    }
+    @Override
+    public Info getInfoById(String id) {
+        return infoRepo.findInfoById(id);
+    }
+    @Override
+    public Info getInfoByName(String name) {
+        return infoRepo.findInfoByName(name);
+    }
+
+    private void persistPokemonSearches(PokemonApiResponse response) {
+        if(response == null) {
+            return;
+        }
+        Info info = infoRepo.findInfoByName(response.getName());
+        Info.InfoBuilder infoBuilder = Info.builder().name(response.getName());
+        if(info != null) {
+            infoBuilder
+                    .id(info.getId())
+                    .createDate(info.getCreateDate());
+        }
+        infoRepo.save(infoBuilder.build());
     }
 
     private String getTranslatedDescription(PokemonServiceResponse pokemonServiceResponse) {

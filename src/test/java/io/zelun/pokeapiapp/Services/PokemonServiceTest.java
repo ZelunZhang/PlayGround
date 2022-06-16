@@ -1,5 +1,6 @@
 package io.zelun.pokeapiapp.Services;
 
+import io.zelun.pokeapiapp.Repo.InfoRepo;
 import io.zelun.pokeapiapp.clients.PokeApiClient;
 import io.zelun.pokeapiapp.clients.TranslationApiClient;
 import io.zelun.pokeapiapp.dto.PokemonServiceResponse;
@@ -11,6 +12,7 @@ import io.zelun.pokeapiapp.dto.translationApi.Contents;
 import io.zelun.pokeapiapp.dto.translationApi.TranslationRequest;
 import io.zelun.pokeapiapp.dto.translationApi.TranslationResponse;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,8 +33,17 @@ public class PokemonServiceTest {
     @Mock
     private TranslationApiClient translationApiClient;
 
+    @Mock
+    private InfoRepo infoRepo;
+
     @InjectMocks
     private PokemonServiceImpl pokemonService;
+
+    @BeforeAll
+    public void beforeAll() {
+        when(infoRepo.findInfoById(any())).thenReturn(null);
+        when(infoRepo.save(any())).thenReturn(null);
+    }
 
     @Test
     public void testGetPokemonById() {

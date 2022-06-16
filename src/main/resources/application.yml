@@ -1,5 +1,5 @@
 server:
-  port : 5000
+  port: 5000
 
 pokemon:
   base:
@@ -10,15 +10,40 @@ Translation:
     url: https://api.funtranslations.com/translate/
 
 feign:
-    client:
-        config:
-            default:
-                connectTimeout: 5000
-                readTimeout: 5000
-                loggerLevel: FULL
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: FULL
 
 logging:
   level:
     org:
       springframework:
         cache: TRACE
+
+# ****** H2 In Memory Database Connection Info *******
+spring:
+  application:
+    name: pokeApiApp
+  datasource: # use in-memory db for unit testing
+    url: jdbc:h2:mem:staffjoy_account;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    continue-on-error: false
+    platform: h2
+    h2:
+      console:
+        enabled: true
+    jpa:
+      hibernate:
+        ddl-auto: validate
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+    output:
+      ansi:
+        enabled: always
